@@ -41,4 +41,4 @@ func (app *application) jsonResponse(w http.ResponseWriter,status int,data any) 
 	}
 
 	return writeJSON(w,status,&envelope{Data: data})
-}
+} 

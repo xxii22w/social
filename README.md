@@ -14,5 +14,5 @@ psql -U admin -d social
 \c database_name # 切换数据库
 \i file_path # 执行sql文件
 \s # 查看当前命令行历史
-
+http://localhost:8080/v1/swagger/index.html
 ```

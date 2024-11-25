@@ -1,11 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
+	"github.com/xxii22w/social/docs"
 	"github.com/xxii22w/social/internal/store"
 )
 
@@ -17,7 +20,8 @@ type application struct {
 type config struct {
 	addr string
 	db   dbConfig
-	env string
+	env  string
+	apiURL string
 }
 
 type dbConfig struct {
@@ -43,15 +47,18 @@ func (app *application) mount() http.Handler {
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
 
-		r.Route("/posts",func (r chi.Router)  {
-			r.Post("/",app.createPostHandler)
+		docsURL := fmt.Sprintf("%s/swagger/doc.json", app.config.addr)
+		r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL(docsURL)))
 
-			r.Route("/{postID}",func(r chi.Router) {
+		r.Route("/posts", func(r chi.Router) {
+			r.Post("/", app.createPostHandler)
+
+			r.Route("/{postID}", func(r chi.Router) {
 				r.Use(app.postsContextMiddleware)
 
-				r.Get("/",app.getPostHandler)
-				r.Delete("/",app.deletePostHandler)
-				r.Patch("/",app.updatePostHandler)
+				r.Get("/", app.getPostHandler)
+				r.Delete("/", app.deletePostHandler)
+				r.Patch("/", app.updatePostHandler)
 			})
 		})
 
@@ -73,6 +80,10 @@ func (app *application) mount() http.Handler {
 }
 
 func (app *application) run(mux http.Handler) error {
+	// Docs
+	docs.SwaggerInfo.Version = version
+	docs.SwaggerInfo.Host = app.config.apiURL
+	docs.SwaggerInfo.BasePath = "/v1"
 
 	srv := &http.Server{
 		Addr:         app.config.addr,
