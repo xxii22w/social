@@ -599,10 +599,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "/v2",
+	BasePath:         "/v1",
 	Schemes:          []string{},
 	Title:            "Social",
-	Description:      "This is a sample server Petstore server.",
+	Description:      "API for Social",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
