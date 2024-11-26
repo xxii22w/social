@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/xxii22w/social/internal/db"
@@ -50,6 +51,9 @@ func main() {
 			maxIdleTime:  os.Getenv("DB_MAX_IDLE_TIME"),
 		},
 		env: os.Getenv("ENV"),
+		mail: mailConfig{
+			exp: time.Hour * 24 * 3,
+		},
 	}
 
 	// Logger
